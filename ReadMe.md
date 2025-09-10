@@ -3,7 +3,7 @@
 ## О модуле
 
 Тестовое задание для старта трудоустройства № 2.  
-Условия задания смотри в [Conditions.md]().  
+Условия задания смотри в [Conditions.md](https://github.com/taker1974/tk-flights/blob/main/Conditions.md).  
 Java, Stream API.
 
 ## Применяемые технологии
