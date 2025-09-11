@@ -15,13 +15,21 @@ public class FilterGroundTimeExceed implements FlightFilter {
 
     public boolean process(final Flight flight, final Object... args) {
 
+        if (flight == null) {
+            throw new IllegalArgumentException("Flight cannot be null");
+        }
+
+        List<Segment> segments = flight.getSegments();
+        if (segments == null || segments.isEmpty()) {
+            return false;
+        }
+
         long groundLimit = 120; // 2 hours by default
         if (args != null && args.length > 0 && args[0] instanceof Long longValue) {
             groundLimit = longValue;
         }
         long groundTime = 0;
 
-        List<Segment> segments = flight.getSegments();
         int upperIndex = segments.size() - 1;
         for (int i = 0; i < upperIndex; i++) {
             LocalDateTime arrival = segments.get(i).getArrivalDate();
@@ -36,5 +44,4 @@ public class FilterGroundTimeExceed implements FlightFilter {
 
         return false;
     }
-
 }
