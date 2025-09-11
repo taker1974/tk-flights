@@ -14,7 +14,7 @@ public class FlightBuilder {
         // utility class
     }
 
-    static List<Flight> createFlights() {
+    public static List<Flight> createFlights() {
         LocalDateTime threeDaysFromNow = LocalDateTime.now().plusDays(3);
         return Arrays.asList(
                 // A normal flight with two hour duration

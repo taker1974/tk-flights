@@ -29,7 +29,7 @@ public class Segment {
     public String toString() {
         DateTimeFormatter fmt =
                 DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-        return '[' + departureDate.format(fmt) + '|' + arrivalDate.format(fmt)
+        return '[' + departureDate.format(fmt) + " | " + arrivalDate.format(fmt)
                 + ']';
     }
 }
