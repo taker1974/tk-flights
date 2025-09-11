@@ -1,22 +1,20 @@
 package com.gridnine.testing.filter;
 
-import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.gridnine.testing.base.Flight;
 import com.gridnine.testing.base.Segment;
 
-public class FilterFlewOutEarlier implements FlightFilter {
+public class FilterArrivalBeforeDeparture implements FlightFilter {
 
     private static final Logger logger =
-            LoggerFactory.getLogger(FilterFlewOutEarlier.class);
+            LoggerFactory.getLogger(FilterArrivalBeforeDeparture.class);
 
     public boolean process(final Flight flight, final Object... args) {
-        final LocalDateTime now = LocalDateTime.now();
 
         for (final Segment segment : flight.getSegments()) {
-            if (segment.getDepartureDate().isBefore(now)) {
-                logger.info("Flew out: {}", flight);
+            if (segment.getArrivalDate().isBefore(segment.getDepartureDate())) {
+                logger.info("Arrival befor departure: {}", flight);
                 return true;
             }
         }

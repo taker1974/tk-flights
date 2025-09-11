@@ -5,5 +5,5 @@ import com.gridnine.testing.base.Flight;
 @FunctionalInterface
 public interface FlightFilter {
 
-    boolean process(final Flight flight);
+    boolean process(final Flight flight, final Object... args);
 }
