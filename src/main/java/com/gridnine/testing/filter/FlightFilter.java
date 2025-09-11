@@ -2,7 +2,8 @@ package com.gridnine.testing.filter;
 
 import com.gridnine.testing.base.Flight;
 
+@FunctionalInterface
 public interface FlightFilter {
 
-    Flight filter(final Flight flight, final FlightCallback callback);
+    boolean process(final Flight flight);
 }
