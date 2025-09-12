@@ -47,9 +47,9 @@ public class Main {
         
         // Применение методов фильтрации по набору flights
         List<Flight> filteredFlights = flights.stream()
-            .noneMatch(<filter_1>)
-            .noneMatch(<filter_2>)
-            .noneMatch(<filter_N>)
+            .filter(!<filter_1>)
+            .filter(!<filter_2>)
+            .filter(!<filter_N>)
             .collect(<...>);
         
         // Вывод результатов фильтрации

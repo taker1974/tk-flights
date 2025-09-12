@@ -13,8 +13,8 @@ public class Segment {
     private final LocalDateTime arrivalDate;
 
     public Segment(final LocalDateTime dep, final LocalDateTime arr) {
-        departureDate = Objects.requireNonNull(dep);
-        arrivalDate = Objects.requireNonNull(arr);
+        departureDate = Objects.requireNonNull(dep, "Departure date cannot be null");
+        arrivalDate = Objects.requireNonNull(arr, "Arrival date cannot be null");
     }
 
     public LocalDateTime getDepartureDate() {
