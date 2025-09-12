@@ -3,7 +3,7 @@ package com.gridnine.testing;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.EmptySource;
 import com.gridnine.testing.base.Flight;
 import com.gridnine.testing.base.Segment;
 import com.gridnine.testing.filter.FilterFlewOutEarlier;
@@ -17,7 +17,7 @@ class FilterFlewOutEarlierTest {
 
     @BeforeEach
     void setUp() {
-        fixedDateTime = LocalDateTime.of(2023, 1, 1, 12, 0);
+        fixedDateTime = LocalDateTime.of(2025, 1, 1, 12, 0);
         filter = new FilterFlewOutEarlier(() -> fixedDateTime);
     }
 
@@ -29,15 +29,9 @@ class FilterFlewOutEarlierTest {
     }
 
     @ParameterizedTest
-    @NullAndEmptySource
+    @EmptySource
     void process_WhenNoSegments_ShouldReturnFalse(List<Segment> segments) {
         Flight flight = new Flight(segments);
-        assertThat(filter.process(flight)).isFalse();
-    }
-
-    @Test
-    void process_WhenSegmentsIsNull_ShouldReturnFalse() {
-        Flight flight = new Flight(null);
         assertThat(filter.process(flight)).isFalse();
     }
 

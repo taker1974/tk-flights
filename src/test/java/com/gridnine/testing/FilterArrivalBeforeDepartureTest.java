@@ -3,7 +3,7 @@ package com.gridnine.testing;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.EmptySource;
 import com.gridnine.testing.base.Flight;
 import com.gridnine.testing.base.Segment;
 import com.gridnine.testing.filter.FilterArrivalBeforeDeparture;
@@ -18,7 +18,7 @@ class FilterArrivalBeforeDepartureTest {
     @BeforeEach
     void setUp() {
         filter = new FilterArrivalBeforeDeparture();
-        baseDateTime = LocalDateTime.of(2023, 1, 1, 12, 0);
+        baseDateTime = LocalDateTime.of(2025, 1, 1, 12, 0);
     }
 
     @Test
@@ -29,7 +29,7 @@ class FilterArrivalBeforeDepartureTest {
     }
 
     @ParameterizedTest
-    @NullAndEmptySource
+    @EmptySource
     void process_WhenNoSegments_ShouldReturnFalse(List<Segment> segments) {
         Flight flight = new Flight(segments);
         assertThat(filter.process(flight)).isFalse();
@@ -46,9 +46,7 @@ class FilterArrivalBeforeDepartureTest {
 
     @Test
     void process_WhenOneSegmentHasArrivalBeforeDeparture_ShouldReturnTrue() {
-        Segment invalidSegment = new Segment(baseDateTime, baseDateTime.minusHours(1)); // Прилёт
-                                                                                        // раньше
-                                                                                        // вылета
+        Segment invalidSegment = new Segment(baseDateTime, baseDateTime.minusHours(1));
         Segment validSegment = new Segment(baseDateTime.plusHours(2), baseDateTime.plusHours(4));
         Flight flight = new Flight(List.of(invalidSegment, validSegment));
 
@@ -57,7 +55,7 @@ class FilterArrivalBeforeDepartureTest {
 
     @Test
     void process_WhenArrivalEqualsDeparture_ShouldReturnFalse() {
-        Segment boundarySegment = new Segment(baseDateTime, baseDateTime); // Прилёт равен вылету
+        Segment boundarySegment = new Segment(baseDateTime, baseDateTime);
         Flight flight = new Flight(List.of(boundarySegment));
 
         assertThat(filter.process(flight)).isFalse();
@@ -84,9 +82,7 @@ class FilterArrivalBeforeDepartureTest {
     @Test
     void process_WhenLastSegmentInvalid_ShouldReturnTrue() {
         Segment validSegment = new Segment(baseDateTime, baseDateTime.plusHours(2));
-        Segment invalidSegment = new Segment(baseDateTime.plusHours(3), baseDateTime.plusHours(2)); // Прилёт
-                                                                                                    // раньше
-                                                                                                    // вылета
+        Segment invalidSegment = new Segment(baseDateTime.plusHours(3), baseDateTime.plusHours(2));
         Flight flight = new Flight(List.of(validSegment, invalidSegment));
 
         assertThat(filter.process(flight)).isTrue();
@@ -113,7 +109,6 @@ class FilterArrivalBeforeDepartureTest {
         Segment invalidSegment = new Segment(baseDateTime, baseDateTime.minusHours(1));
         Flight flight = new Flight(List.of(invalidSegment));
 
-        // Передаём аргументы, но они не должны влиять на логику
         assertThat(filter.process(flight, "someArg", 123)).isTrue();
     }
 }

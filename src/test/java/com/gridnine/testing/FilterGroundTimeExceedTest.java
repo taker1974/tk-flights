@@ -3,7 +3,7 @@ package com.gridnine.testing;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import com.gridnine.testing.base.Flight;
 import com.gridnine.testing.base.Segment;
@@ -19,7 +19,7 @@ class FilterGroundTimeExceedTest {
     @BeforeEach
     void setUp() {
         filter = new FilterGroundTimeExceed();
-        baseDateTime = LocalDateTime.of(2023, 1, 1, 12, 0);
+        baseDateTime = LocalDateTime.of(2025, 1, 1, 12, 0);
     }
 
     @Test
@@ -30,7 +30,7 @@ class FilterGroundTimeExceedTest {
     }
 
     @ParameterizedTest
-    @NullAndEmptySource
+    @EmptySource
     void process_WhenNoSegments_ShouldReturnFalse(List<Segment> segments) {
         Flight flight = new Flight(segments);
         assertThat(filter.process(flight)).isFalse();
@@ -65,11 +65,9 @@ class FilterGroundTimeExceedTest {
 
     @Test
     void process_WhenGroundTimeExceedsLimit_ShouldReturnTrue() {
+        // 3 часа на земле
         Segment segment1 = new Segment(baseDateTime, baseDateTime.plusHours(1));
-        Segment segment2 = new Segment(baseDateTime.plusHours(4), baseDateTime.plusHours(5)); // 3
-                                                                                              // часа
-                                                                                              // на
-                                                                                              // земле
+        Segment segment2 = new Segment(baseDateTime.plusHours(4), baseDateTime.plusHours(5));
         Flight flight = new Flight(List.of(segment1, segment2));
 
         assertThat(filter.process(flight)).isTrue();
@@ -77,27 +75,22 @@ class FilterGroundTimeExceedTest {
 
     @Test
     void process_WhenMultipleSegmentsWithExceedingGroundTime_ShouldReturnTrue() {
+        // 1 час на земле
         Segment segment1 = new Segment(baseDateTime, baseDateTime.plusHours(1));
-        Segment segment2 = new Segment(baseDateTime.plusHours(2), baseDateTime.plusHours(3)); // 1
-                                                                                              // час
-                                                                                              // на
-                                                                                              // земле
-        Segment segment3 = new Segment(baseDateTime.plusHours(5), baseDateTime.plusHours(6)); // 2
-                                                                                              // часа
-                                                                                              // на
-                                                                                              // земле
+        Segment segment2 = new Segment(baseDateTime.plusHours(2), baseDateTime.plusHours(3));
+
+        // 2 часа на земле
+        Segment segment3 = new Segment(baseDateTime.plusHours(5), baseDateTime.plusHours(6));
         Flight flight = new Flight(List.of(segment1, segment2, segment3));
 
-        assertThat(filter.process(flight)).isTrue(); // Общее время на земле = 3 часа
+        assertThat(filter.process(flight)).isTrue(); // Общее время на земле - 3 часа
     }
 
     @Test
     void process_WhenUsingCustomLimitViaArgs_ShouldOverrideDefault() {
+        // 1 час на земле
         Segment segment1 = new Segment(baseDateTime, baseDateTime.plusHours(1));
-        Segment segment2 = new Segment(baseDateTime.plusHours(2), baseDateTime.plusHours(3)); // 1
-                                                                                              // час
-                                                                                              // на
-                                                                                              // земле
+        Segment segment2 = new Segment(baseDateTime.plusHours(2), baseDateTime.plusHours(3));
         Flight flight = new Flight(List.of(segment1, segment2));
 
         // Устанавливаем лимит в 30 минут (меньше 1 часа)
@@ -109,24 +102,20 @@ class FilterGroundTimeExceedTest {
 
     @Test
     void process_WhenArgsContainNonLong_ShouldUseDefaultLimit() {
+        // 3 часа на земле
         Segment segment1 = new Segment(baseDateTime, baseDateTime.plusHours(1));
-        Segment segment2 = new Segment(baseDateTime.plusHours(4), baseDateTime.plusHours(5)); // 3
-                                                                                              // часа
-                                                                                              // на
-                                                                                              // земле
+        Segment segment2 = new Segment(baseDateTime.plusHours(4), baseDateTime.plusHours(5));
         Flight flight = new Flight(List.of(segment1, segment2));
 
-        // Передаем не-Long аргумент, должен использоваться лимит по умолчанию (2 часа)
+        // Передаем не-Long аргумент: должен использоваться лимит по умолчанию (2 часа)
         assertThat(filter.process(flight, "invalid")).isTrue();
     }
 
     @Test
     void process_WithMultipleArgs_ShouldUseFirstLong() {
+        // 1 час на земле
         Segment segment1 = new Segment(baseDateTime, baseDateTime.plusHours(1));
-        Segment segment2 = new Segment(baseDateTime.plusHours(2), baseDateTime.plusHours(3)); // 1
-                                                                                              // час
-                                                                                              // на
-                                                                                              // земле
+        Segment segment2 = new Segment(baseDateTime.plusHours(2), baseDateTime.plusHours(3));
         Flight flight = new Flight(List.of(segment1, segment2));
 
         // Используем первый аргумент (Long), игнорируем остальные
@@ -137,10 +126,7 @@ class FilterGroundTimeExceedTest {
     void process_WhenNegativeGroundTime_ShouldHandleCorrectly() {
         // Создаем сегменты с "обратным" временем (не должно происходить в реальности)
         Segment segment1 = new Segment(baseDateTime, baseDateTime.plusHours(1));
-        Segment segment2 = new Segment(baseDateTime.minusHours(1), baseDateTime.plusHours(2)); // Отрицательное
-                                                                                               // время
-                                                                                               // на
-                                                                                               // земле
+        Segment segment2 = new Segment(baseDateTime.minusHours(1), baseDateTime.plusHours(2));
         Flight flight = new Flight(List.of(segment1, segment2));
 
         // Duration.between обработает отрицательный интервал корректно
@@ -150,11 +136,9 @@ class FilterGroundTimeExceedTest {
     @ParameterizedTest
     @ValueSource(longs = {0, -1, -100})
     void process_WithNonPositiveCustomLimit_ShouldHandleCorrectly(long limit) {
+        // 1 час на земле
         Segment segment1 = new Segment(baseDateTime, baseDateTime.plusHours(1));
-        Segment segment2 = new Segment(baseDateTime.plusHours(2), baseDateTime.plusHours(3)); // 1
-                                                                                              // час
-                                                                                              // на
-                                                                                              // земле
+        Segment segment2 = new Segment(baseDateTime.plusHours(2), baseDateTime.plusHours(3));
         Flight flight = new Flight(List.of(segment1, segment2));
 
         // Любое положительное время на земле превысит неположительный лимит

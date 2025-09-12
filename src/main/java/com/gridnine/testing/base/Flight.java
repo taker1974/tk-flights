@@ -1,7 +1,7 @@
 package com.gridnine.testing.base;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -11,7 +11,7 @@ public class Flight {
     private final List<Segment> segments;
 
     public Flight(final List<Segment> segs) {
-        segments = segs != null ? segs : Collections.emptyList();
+        segments = Objects.requireNonNull(segs, "Segments cannot be null");
     }
 
     public List<Segment> getSegments() {
