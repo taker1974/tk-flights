@@ -2,6 +2,7 @@ package com.gridnine.testing.filter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +28,7 @@ public class FilterFlewOutEarlier implements FlightFilter {
 
     /** Constructor with custom current date time supplier. */
     public FilterFlewOutEarlier(Supplier<LocalDateTime> currentDateTimeSupplier) {
-        this.currentDateTimeSupplier = currentDateTimeSupplier;
+        this.currentDateTimeSupplier = Objects.requireNonNull(currentDateTimeSupplier);
     }
 
     /**
@@ -35,10 +36,11 @@ public class FilterFlewOutEarlier implements FlightFilter {
      * 
      * @param flight Flight object.
      * @param args Arguments.
-     * @return true if there is an element with arrival time before departure time, false otherwise.
-     *         Also return false if segments is null or empty.
+     * @return true if there is an element with departure time is in past, false otherwise. Also
+     *         return false if segments is null or empty.
      * @throws IllegalArgumentException if flight is null.
      */
+    @Override
     public boolean process(final Flight flight, final Object... args) {
 
         if (flight == null) {
@@ -54,13 +56,13 @@ public class FilterFlewOutEarlier implements FlightFilter {
                 (args != null && args.length > 0 && args[0] instanceof LocalDateTime dt) ? dt
                         : currentDateTimeSupplier.get();
 
-        return segments.stream()
-                .anyMatch(segment -> {
-                    boolean hasInvalidSegment = segment.getDepartureDate().isBefore(now);
-                    if (hasInvalidSegment) {
-                        logger.info("Flew out: {}", flight);
-                    }
-                    return hasInvalidSegment;
-                });
+        boolean hasInvalidSegment = segments.stream()
+                .anyMatch(segment -> segment.getDepartureDate().isBefore(now));
+
+        if (hasInvalidSegment) {
+            logger.info("Flew out: {}", flight);
+        }
+
+        return hasInvalidSegment;
     }
 }
