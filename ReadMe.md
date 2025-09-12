@@ -22,13 +22,9 @@ process() может принимать произвольные парамет�
 ## Применяемые технологии
 
 Java 21, openjdk,
-Stream API,  
-Lombok,  
-JUnit, Testcontainers, Docker, Docker Compose,  
-JavaDoc,  
+Stream API, JUnit, JavaDoc,  
 Fedora Linux 42, VS Code,
-DeepSeek, GigaCode,  
-git, github projects, kanban.
+DeepSeek, GigaCode, git.
 
 ## Быстрый старт
 
