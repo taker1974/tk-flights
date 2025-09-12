@@ -11,6 +11,11 @@ import com.gridnine.testing.filter.FilterFlewOutEarlier;
 import com.gridnine.testing.filter.FilterGroundTimeExceed;
 import com.gridnine.testing.filter.FlightFilter;
 
+/**
+ * Main class.
+ * 
+ * @author Konstantin Terskikh, kostus.online.1974@yandex.ru, 2025
+ */
 public class Main {
 
     private static final Logger logger =

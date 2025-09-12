@@ -6,11 +6,26 @@ import org.slf4j.LoggerFactory;
 import com.gridnine.testing.base.Flight;
 import com.gridnine.testing.base.Segment;
 
+/**
+ * Filter by "arrival before departure".
+ * 
+ * @author Konstantin Terskikh, kostus.online.1974@yandex.ru, 2025
+ */
 public class FilterArrivalBeforeDeparture implements FlightFilter {
 
     private static final Logger logger =
             LoggerFactory.getLogger(FilterArrivalBeforeDeparture.class);
 
+    /**
+     * Method for finding an element with arrival time before departure time. Uses streams. Can be
+     * parallelized.
+     * 
+     * @param flight Flight object.
+     * @param args Arguments.
+     * @return true if there is an element with arrival time before departure time, false otherwise.
+     *         Also return false if segments is null or empty.
+     * @throws IllegalArgumentException if flight is null.
+     */
     public boolean process(final Flight flight, final Object... args) {
 
         if (flight == null) {
@@ -22,13 +37,14 @@ public class FilterArrivalBeforeDeparture implements FlightFilter {
             return false;
         }
 
-        for (final Segment segment : flight.getSegments()) {
-            if (segment.getArrivalDate().isBefore(segment.getDepartureDate())) {
-                logger.info("Arrival befor departure: {}", flight);
-                return true;
-            }
-        }
-
-        return false;
+        return segments.stream()
+                .anyMatch(segment -> {
+                    boolean hasInvalidSegment =
+                            segment.getArrivalDate().isBefore(segment.getDepartureDate());
+                    if (hasInvalidSegment) {
+                        logger.info("Arrival before departure: {}", flight);
+                    }
+                    return hasInvalidSegment;
+                });
     }
 }
