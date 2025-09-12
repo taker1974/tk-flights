@@ -30,6 +30,7 @@ public class FilterGroundTimeExceed implements FlightFilter {
      *         Also return false if segments is null or empty.
      * @throws IllegalArgumentException if flight is null.
      */
+    @Override
     public boolean process(final Flight flight, final Object... args) {
 
         if (flight == null) {
